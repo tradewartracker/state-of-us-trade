@@ -229,6 +229,48 @@
     .reveal{transition:none} .slide.is-active .reveal{max-height:none}
   }
 
+  /* ---- phones -------------------------------------------------------------
+     The deck scales type off viewport HEIGHT, which alone is not enough on a
+     small phone: the frosted overlays stayed bulky, and the product list ran
+     ~2x the screen. Because .fg is a space-between column whose middle child
+     is centered, an over-tall list overflows BOTH ways - so it spilled up over
+     the section header as well as off the bottom. Compress the overlays and
+     the product rows, and cap the middle column so it can never reach the
+     header again. */
+  @media (max-width:700px){
+    .kick::after{display:none}                    /* rule collided with pins */
+    .kick .eyebrow{font-size:.72rem; letter-spacing:.16em}
+
+    /* overlays: smaller, and never full-bleed wide */
+    .plate{padding:.55rem .75rem; border-radius:11px; gap:.25rem; max-width:100%}
+    .revpanel{gap:1rem; padding:.6rem .8rem; border-radius:11px}
+    .rev-row{font-size:.8rem}
+    .rev-col{gap:.18rem}
+    .slide.is-active .reveal{max-height:38vh}
+    /* the AI panel lists 5 sources vs 3 on the other two panels, and at this
+       width the extra rows covered the AI line's climb - the one thing that
+       slide exists to show. Trim to 3, matching the other reveals. */
+    #revAI .rev-row:nth-child(n+4){display:none}
+    .pin{font-size:.78rem; gap:.32rem}
+    .pin .dot{width:9px; height:9px}
+    /* .ytick and .credit both sit at bottom:5px and collided at this width;
+       lift the credit clear of the year ticks rather than drop either. */
+    .credit{font-size:.54rem; right:6px; bottom:20px}
+
+    /* products: five rows have to fit a short screen */
+    .prodwrap{min-height:0; overflow:hidden}
+    .plist{text-align:left}      /* centred names wrapped raggedly at 375px */
+    .prod{padding:.28rem 0; gap:.12rem .5rem}
+    .prod .pn{font-size:.79rem; letter-spacing:-.015em}
+    .prod .hs{font-size:.56rem; letter-spacing:.03em}
+    .prod .pv{font-size:.92rem}
+    .seg{height:9px; margin-top:.12rem; border-radius:4px}
+    .skey{font-size:.57rem; gap:.4rem; margin-top:.08rem}
+    .skey i{width:7px; height:7px}
+    .chip{font-size:.62rem; padding:.1em .45em}
+    .axis{font-size:.56rem}
+  }
+
   /* nav */
   .nav{position:fixed; top:50%; transform:translateY(-50%); z-index:6; width:44px;height:44px; border-radius:50%;
     border:1px solid var(--line); background:color-mix(in srgb,var(--surface) 86%,transparent); color:var(--ink);
@@ -344,7 +386,7 @@
     <section class="slide" data-title="Products">
       <div class="fg pad-lg col between">
         <div class="kick"><span class="eyebrow">Product spotlight · largest single HS6 imports</span></div>
-        <div class="col center" style="flex:1; justify-content:center">
+        <div class="col center prodwrap" style="flex:1; justify-content:center">
           <div class="plist" id="prodList"></div>
         </div>
         <div class="axis">Bars show country-of-origin mix · effective tariff = duties ÷ import value</div>
@@ -421,7 +463,13 @@
   // ---------- full-bleed background line charts ----------
   function midx(s){ return (+s.slice(0,4))*12 + (+s.slice(5,7)) - 1; }
   var X0=midx("2023-01"), LT=midx(SERIES.latest), X1=LT+4, SPAN=X1-X0;
-  var XL=1.5, XR=7, VT=22, VB=99;   // % geometry within the slide box
+  // % geometry within the slide box. On a phone the stat plate + auto-revealed
+  // panel occupy the top ~46%, and at VT=22 the series (and its endpoint pin)
+  // were drawn UNDER them - on the imports/exports slide the whole import line
+  // disappeared behind the frosted panel. Start the plot band below the
+  // overlays instead, so the layering reads as designed rather than hiding data.
+  var PHONE = window.matchMedia("(max-width:700px)").matches;
+  var XL=1.5, XR=7, VT=(PHONE?50:22), VB=99;
 
   var CHARTS=[];
   function chartLayer(id, seriesSpec, o){
