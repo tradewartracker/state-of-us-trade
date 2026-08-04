@@ -240,6 +240,11 @@
   @media (max-width:700px){
     .kick::after{display:none}                    /* rule collided with pins */
     .kick .eyebrow{font-size:.72rem; letter-spacing:.16em}
+    /* The "tariffs begin" label chip crowds the top of every chart slide at this
+       width and collided with the section header. Hide the CHIP only - the dashed
+       marker and the shaded tariff era stay, so the slide keeps the time
+       reference the SPEC requires. */
+    .tmark .tlab{display:none}
     /* slide padding was ~30px top AND bottom at this height - reclaiming it
        buys back a whole content row on every slide. */
     .fg{padding:.85rem 1rem}
