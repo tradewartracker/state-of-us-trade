@@ -41,10 +41,20 @@ Prior months regenerate with `--asof YYYY-MM`.
 ## Monthly update
 
 1. Run the miner for the new month (see the trade-miner `RUNBOOK.md`).
-2. Copy `output/state-of-us-trade/<month>/flipbook.html` → `docs/<month>.html`.
-3. Copy that same file over `docs/index.html`.
-4. Add a row to `docs/archive.html`.
-5. Commit and push — Pages redeploys automatically.
+2. `python -m miner.flipbook --publish` — syncs every built edition into
+   `docs/`, refreshes `index.html`, regenerates `archive.html`.
+3. `git diff` to review, then commit and push. Pages redeploys automatically.
+
+Notes on `--publish`:
+
+- It **never commits.** Files land in `docs/`; review and push yourself.
+- It publishes **all** editions, not just the newest. A design change rebuilds
+  every month, and a latest-only publish would strand the back editions on the
+  old template.
+- **`archive.html` is generated — do not hand-edit it.** Every figure on it comes
+  from that edition's own `FEED`, the same object the deck renders from, so the
+  listing cannot drift from the reports it links to when Census revisions land.
+- Unchanged files are left alone, so `git diff` shows only real changes.
 
 ## tradewartracker.com
 
