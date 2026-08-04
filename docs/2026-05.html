@@ -1,0 +1,560 @@
+<title>State of US Trade — May 2026</title>
+<style>
+  :root{
+    --bg:#EEF1F5; --surface:#FFFFFF; --surface-2:#F7F9FC;
+    --ink:#0E1626; --ink-soft:#48566E; --ink-faint:#8492A8;
+    --line:#D6DDE7; --line-soft:#E6EBF2;
+    --import:#D9752B; --import-soft:#E6A468;
+    --export:#1F8A80; --export-soft:#5FB3AB;
+    --alert:#CE3C2B; --alert-soft:#E0806F; --stamp:#CE3C2B;
+    --scrim:rgba(238,241,245,.72);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0A111F; --surface:#111C30; --surface-2:#0E1728;
+      --ink:#EAF0F8; --ink-soft:#98A8C1; --ink-faint:#5E6F8B;
+      --line:#233248; --line-soft:#1A2740;
+      --import:#E89150; --import-soft:#8A5a2f;
+      --export:#37B0A4; --export-soft:#2c6560;
+      --alert:#E8543F; --alert-soft:#7d3128; --stamp:#E8543F;
+      --scrim:rgba(10,17,31,.62);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#EEF1F5; --surface:#FFFFFF; --surface-2:#F7F9FC;
+    --ink:#0E1626; --ink-soft:#48566E; --ink-faint:#8492A8;
+    --line:#D6DDE7; --line-soft:#E6EBF2;
+    --import:#D9752B; --import-soft:#E6A468;
+    --export:#1F8A80; --export-soft:#5FB3AB;
+    --alert:#CE3C2B; --alert-soft:#E0806F; --stamp:#CE3C2B; --scrim:rgba(238,241,245,.72);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A111F; --surface:#111C30; --surface-2:#0E1728;
+    --ink:#EAF0F8; --ink-soft:#98A8C1; --ink-faint:#5E6F8B;
+    --line:#233248; --line-soft:#1A2740;
+    --import:#E89150; --import-soft:#8A5a2f;
+    --export:#37B0A4; --export-soft:#2c6560;
+    --alert:#E8543F; --alert-soft:#7d3128; --stamp:#E8543F; --scrim:rgba(10,17,31,.62);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow:hidden;
+  }
+  .num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1}
+  .eyebrow{font-size:clamp(.6rem,1.5vh,.7rem); letter-spacing:.22em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+
+  /* shell */
+  .reader{height:100dvh; display:flex; flex-direction:column; overflow:hidden}
+  .topbar{display:flex; align-items:center; gap:.9rem; padding:.6rem clamp(1rem,4vw,2.2rem);
+    border-bottom:1px solid var(--line); background:color-mix(in srgb,var(--bg) 82%,transparent);
+    backdrop-filter:blur(8px); z-index:5; flex:none}
+  .brand{display:flex; align-items:baseline; gap:.55rem; white-space:nowrap}
+  .brand b{font-weight:800; letter-spacing:-.01em}
+  .brand .d{width:8px;height:8px;border-radius:50%;background:var(--alert);display:inline-block}
+  .rail{display:flex; gap:6px; flex:1; align-items:center; justify-content:center}
+  .rail button{height:5px; border:0; padding:0; border-radius:3px; cursor:pointer; background:var(--line); width:22px; transition:width .35s,background .35s}
+  .rail button.on{background:var(--ink); width:40px}
+  .counter{font-size:.72rem; letter-spacing:.14em; color:var(--ink-faint); font-weight:700; white-space:nowrap}
+  .tbtn{border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:8px; width:32px;height:30px; cursor:pointer; font-size:.9rem; line-height:1}
+  .tbtn:hover{color:var(--ink); border-color:var(--ink-faint)}
+
+  /* deck */
+  .deck{flex:1; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scroll-behavior:smooth; scrollbar-width:none}
+  .deck::-webkit-scrollbar{display:none}
+  .slide{position:relative; min-width:100%; height:100%; scroll-snap-align:start; scroll-snap-stop:always; overflow:hidden}
+
+  /* layers */
+  .bg{position:absolute; inset:0; z-index:0}
+  .csvg{position:absolute; inset:0}
+  .bg svg{position:absolute; inset:0; width:100%; height:100%}
+  #bgCover, #bgClose{opacity:.34}
+  .fg{position:absolute; inset:0; z-index:1; padding:clamp(1.1rem,3.4vh,2.4rem) clamp(1.2rem,4.5vw,3.2rem)}
+  .fg.pad-lg{padding:clamp(1.4rem,4.5vh,3rem) clamp(1.4rem,5.5vw,4rem)}
+
+  /* type */
+  h1,h2{margin:0; line-height:1.0; text-wrap:balance; letter-spacing:-.025em}
+  .kick{display:flex; align-items:center; gap:.7rem}
+  .kick::after{content:""; height:1px; width:min(22vw,180px); background:var(--line)}
+  .kick .eyebrow{font-size:clamp(.76rem,2.1vh,.98rem); color:var(--ink-soft)}
+  .title{font-size:clamp(1.5rem,4.6vh,2.6rem); font-weight:800; letter-spacing:-.02em}
+  .lede{font-size:clamp(.92rem,2.2vh,1.16rem); line-height:1.45; color:var(--ink-soft); max-width:46ch}
+  .lede b{color:var(--ink); font-weight:700}
+  .hero{font-size:clamp(2.8rem,11vh,6.2rem); font-weight:800; letter-spacing:-.045em; line-height:.86}
+  .hero .u{font-size:.32em; font-weight:700; letter-spacing:0}
+  .big{font-size:clamp(2rem,6.5vh,3.4rem); font-weight:800; letter-spacing:-.03em; line-height:.95}
+  .cover-title{text-transform:uppercase; letter-spacing:.055em; font-weight:800; line-height:1.04; font-size:clamp(2.1rem,7.2vh,4.2rem)}
+  .covernums{display:flex; gap:clamp(1.4rem,5vw,3.6rem); flex-wrap:wrap; margin-top:.7rem}
+  .cnum{display:flex; flex-direction:column; gap:.15rem}
+  .cval{font-size:clamp(1.8rem,5.5vh,3rem); font-weight:800; letter-spacing:-.02em; line-height:1}
+
+  .chip{display:inline-flex; align-items:center; gap:.34em; font-weight:700; font-size:clamp(.7rem,1.7vh,.82rem);
+    padding:.18em .6em; border-radius:999px; border:1px solid var(--line); color:var(--ink-soft); background:color-mix(in srgb,var(--surface) 70%,transparent)}
+  .chip.up{color:var(--export); border-color:color-mix(in srgb,var(--export) 40%,var(--line))}
+  .chip.down{color:var(--alert); border-color:color-mix(in srgb,var(--alert) 40%,var(--line))}
+  .chip.flag{color:var(--stamp); border-color:color-mix(in srgb,var(--stamp) 45%,var(--line)); background:color-mix(in srgb,var(--stamp) 8%,transparent)}
+  .stat-lab{font-size:clamp(.62rem,1.5vh,.72rem); letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+
+  /* frosted plate for legibility over the chart */
+  .plate{background:var(--scrim); backdrop-filter:blur(3px); border-radius:14px; padding:clamp(.7rem,1.8vh,1.1rem) clamp(.9rem,2vw,1.3rem); display:inline-flex; flex-direction:column; gap:.35rem; align-self:flex-start; max-width:min(92vw,34rem)}
+
+  /* pinned annotations on the curve */
+  .pin{position:absolute; z-index:3; display:flex; align-items:center; gap:.45rem; font-weight:800; font-size:clamp(.86rem,2.1vh,1.08rem); white-space:nowrap; pointer-events:none}
+  .pin .dot{width:12px;height:12px;border-radius:50%; flex:none; box-shadow:0 0 0 3px color-mix(in srgb,var(--bg) 70%,transparent)}
+  .pin .lab{background:var(--scrim); backdrop-filter:blur(2px); padding:.24em .55em; border-radius:8px}
+
+  /* time axis: year ticks + tariff-era marker + source credit */
+  .ytick{position:absolute; bottom:5px; transform:translateX(-50%); z-index:2; font-weight:800; letter-spacing:.05em;
+    font-size:clamp(.66rem,1.6vh,.8rem); color:var(--ink-faint); font-variant-numeric:tabular-nums}
+  .ytick.first{transform:none}
+  .tmark{position:absolute; top:0; bottom:0; width:0; z-index:1; border-left:2px dashed color-mix(in srgb,var(--alert) 60%,transparent)}
+  .tmark .tlab{position:absolute; top:9px; left:6px; white-space:nowrap; font-size:clamp(.62rem,1.5vh,.76rem); font-weight:800;
+    color:#fff; background:var(--alert); padding:.2em .5em; border-radius:6px}
+  .credit{position:absolute; right:10px; bottom:5px; z-index:2; font-weight:600; font-size:clamp(.58rem,1.3vh,.7rem); color:var(--ink-faint)}
+  .pin.r{transform:translate(-100%,-50%)} .pin.r .lab{order:-1}
+  .pin.l{transform:translate(0,-50%)}
+  .pin.t{transform:translate(-50%,-115%); flex-direction:column; gap:.2rem}
+  .pin.b{transform:translate(-50%,15%); flex-direction:column-reverse; gap:.2rem}
+
+  .stamp{display:inline-flex; flex-direction:column; align-items:center; gap:.05rem; border:2px solid var(--stamp); color:var(--stamp);
+    border-radius:10px; padding:.35rem .7rem; transform:rotate(-5deg); text-align:center; font-weight:800; letter-spacing:.03em}
+  .stamp small{font-size:.58rem; letter-spacing:.18em; opacity:.85}
+  .stamp b{font-size:clamp(.95rem,2.4vh,1.15rem)}
+
+  /* progressive-disclosure reveal — a detail panel that slides in below the plate */
+  .reveal{max-height:0; overflow:hidden; opacity:0; align-self:flex-start;
+    transition:max-height .55s cubic-bezier(.3,.7,.2,1), opacity .45s ease}
+  .slide.is-active .reveal{max-height:46vh; opacity:1; transition-delay:.45s}
+  .revpanel{display:flex; gap:clamp(1.2rem,3.5vw,2.8rem); margin-top:.25rem;
+    padding:clamp(.8rem,2vh,1.15rem) clamp(1rem,2.4vw,1.5rem);
+    background:var(--scrim); backdrop-filter:blur(6px); border:1px solid var(--line); border-radius:14px;
+    box-shadow:0 18px 44px -24px rgba(0,0,0,.5)}
+  .rev-col{display:flex; flex-direction:column; gap:.3rem}
+  .rev-row{font-size:clamp(.8rem,1.9vh,.98rem); font-weight:700; white-space:nowrap; color:var(--ink)}
+  .rev-row b{font-variant-numeric:tabular-nums; margin-right:.4rem}
+  .rev-row span{color:var(--ink-faint); font-weight:600; margin-left:.35rem; font-size:.85em}
+
+  /* products (no sparklines) */
+  .plist{display:flex; flex-direction:column; width:min(100%,54rem)}
+  .prod{display:grid; grid-template-columns:1fr auto; gap:.25rem .8rem; padding:clamp(.45rem,1.5vh,.9rem) 0; border-bottom:1px solid var(--line-soft)}
+  .prod:last-child{border-bottom:0}
+  .prod .pn{font-weight:800; font-size:clamp(.92rem,2.2vh,1.12rem); letter-spacing:-.01em}
+  .prod .hs{font-size:.66rem; color:var(--ink-faint); font-weight:700; letter-spacing:.05em}
+  .prod .rt{justify-self:end; align-self:center; text-align:right; display:flex; align-items:baseline; gap:.5rem}
+  .prod .pv{font-weight:800; font-size:clamp(1rem,2.6vh,1.32rem); letter-spacing:-.02em}
+  .seg{grid-column:1 / -1; display:flex; height:clamp(14px,2vh,20px); border-radius:6px; overflow:hidden; border:1px solid var(--line-soft); margin-top:.2rem}
+  .seg > i{height:100%; min-width:2px; display:block}
+  .skey{grid-column:1 / -1; display:flex; gap:.85rem; flex-wrap:wrap; font-size:clamp(.66rem,1.5vh,.74rem); color:var(--ink-soft); margin-top:.15rem}
+  .skey span{display:inline-flex; align-items:center; gap:.32rem} .skey i{width:9px;height:9px;border-radius:2px}
+
+  /* thread + cta */
+  .thread{display:flex; flex-direction:column; gap:clamp(.35rem,1.2vh,.7rem); width:min(100%,44rem)}
+  .tw{display:flex; gap:.7rem; padding:clamp(.5rem,1.4vh,.85rem) clamp(.7rem,1.6vw,1.05rem); border:1px solid var(--line); border-radius:12px; background:color-mix(in srgb,var(--surface) 78%,transparent)}
+  .tw .n{font-weight:800; color:var(--alert); flex:none}
+  .tw p{margin:0; line-height:1.4; font-size:clamp(.82rem,1.9vh,.98rem)}
+  .cta{display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-top:.4rem;
+    padding:clamp(.9rem,2.4vh,1.3rem) clamp(1.1rem,2.6vw,1.5rem); border-radius:16px; color:#fff;
+    background:linear-gradient(120deg,#111C30,#1c2c49); border:1px solid var(--line)}
+  .cta .go{background:var(--alert); color:#fff; text-decoration:none; font-weight:800; padding:.65rem 1.15rem; border-radius:10px; white-space:nowrap}
+  .cta .go:hover{filter:brightness(1.08)}
+  .cta-h{font-weight:800; font-size:clamp(1rem,2.4vh,1.2rem)}
+  .cta-s{opacity:.85; font-size:.88rem; margin-top:.15rem}
+
+  /* final slide: post kit (thread + angles) + explore box */
+  .postkit{flex:1; display:grid; grid-template-columns:1fr; gap:clamp(1rem,3vw,2rem);
+    align-content:center; width:min(100%,58rem); align-self:center}
+  @media(min-width:820px){ .postkit{grid-template-columns:1.12fr .88fr; align-items:start} }
+  .pk-thread{display:flex; flex-direction:column; gap:.45rem}
+  .pk-side{display:flex; flex-direction:column; gap:clamp(.7rem,2vh,1.1rem)}
+  .pk-angles{display:flex; flex-direction:column; gap:.45rem}
+  #angles{display:flex; flex-direction:column; gap:.4rem}
+  /* summary bubbles: key takeaways + interesting angles share one look */
+  .takeaways, #angles{display:flex; flex-direction:column; gap:clamp(.45rem,1.5vh,.8rem)}
+  .tk, .angle{display:flex; gap:.6rem; align-items:flex-start; line-height:1.38; color:var(--ink); font-weight:500;
+    font-size:clamp(.86rem,1.95vh,1.05rem); padding:clamp(.5rem,1.4vh,.78rem) clamp(.7rem,1.2vw,.95rem);
+    border:1px solid var(--line); border-radius:11px; background:color-mix(in srgb,var(--surface) 72%,transparent)}
+  .tk b, .angle b{color:var(--ink); font-weight:800}
+  .pk-title{font-size:clamp(.98rem,2.4vh,1.26rem); letter-spacing:.06em; text-transform:uppercase; font-weight:800;
+    color:var(--ink-soft); margin-bottom:.2rem}
+  .tk .kn{font-size:.78em; font-weight:800; color:var(--alert); font-variant-numeric:tabular-nums; flex:none; margin-top:.12em;
+    border:1px solid color-mix(in srgb,var(--alert) 40%,var(--line)); border-radius:6px; padding:.05em .5em}
+  .angle .tag{font-size:.66em; letter-spacing:.08em; text-transform:uppercase; font-weight:800; color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:6px; padding:.2em .5em; flex:none; margin-top:.2em}
+
+  .foot{color:var(--ink-faint); font-size:clamp(.66rem,1.5vh,.8rem); font-weight:600; display:flex; gap:1rem; flex-wrap:wrap}
+  .axis{color:var(--ink-faint); font-size:clamp(.62rem,1.4vh,.74rem); font-weight:700; letter-spacing:.04em}
+
+  /* layout helpers */
+  .col{display:flex; flex-direction:column; height:100%}
+  .between{justify-content:space-between}
+  .center{justify-content:center; align-items:center; text-align:center}
+  .gap{gap:clamp(.5rem,1.6vh,1rem)}
+  .gap-sm{gap:clamp(.3rem,1vh,.6rem)}
+
+  /* line draw / fill reveal */
+  .ln{stroke-dasharray:1; stroke-dashoffset:1}
+  .cfill{opacity:0}
+  .slide.is-active .ln{stroke-dashoffset:0; transition:stroke-dashoffset 1.25s cubic-bezier(.3,.7,.2,1)}
+  .slide.is-active .cfill{opacity:1; transition:opacity 1s ease .3s}
+  .slide.is-active .pin{animation:fade .7s ease .8s both}
+  @keyframes fade{from{opacity:0} to{opacity:1}}
+  @media (prefers-reduced-motion:reduce){
+    .ln{stroke-dashoffset:0 !important; transition:none !important}
+    .cfill{opacity:1 !important} .pin{animation:none !important} .deck{scroll-behavior:auto}
+    .reveal{transition:none} .slide.is-active .reveal{max-height:none}
+  }
+
+  /* nav */
+  .nav{position:fixed; top:50%; transform:translateY(-50%); z-index:6; width:44px;height:44px; border-radius:50%;
+    border:1px solid var(--line); background:color-mix(in srgb,var(--surface) 86%,transparent); color:var(--ink);
+    cursor:pointer; font-size:1.3rem; display:grid; place-items:center; backdrop-filter:blur(6px)}
+  .nav:hover{border-color:var(--ink-faint)} .nav:disabled{opacity:.28; cursor:default}
+  .nav.prev{left:clamp(.5rem,1.6vw,1.3rem)} .nav.next{right:clamp(.5rem,1.6vw,1.3rem)}
+  @media(max-width:640px){.nav{display:none}}
+  :focus-visible{outline:2px solid var(--alert); outline-offset:2px; border-radius:4px}
+</style>
+
+<div class="reader">
+  <header class="topbar">
+    <div class="brand"><span class="d"></span><b>Trade War Tracker</b><span class="eyebrow" id="tbMonth" style="letter-spacing:.14em"></span></div>
+    <div class="rail" id="rail" role="tablist" aria-label="Pages"></div>
+    <span class="counter num" id="counter">01 / 07</span>
+    <button class="tbtn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">◐</button>
+  </header>
+
+  <div class="deck" id="deck">
+
+    <!-- 1 · COVER -->
+    <section class="slide" data-title="Cover">
+      <div class="bg" id="bgCover"></div>
+      <div class="fg pad-lg col between">
+        <div class="kick"><span class="eyebrow" id="cvIssue"></span></div>
+        <div class="col gap" style="flex:1; justify-content:center">
+          <h1 class="cover-title">State of US Trade</h1>
+          <p class="lede" style="margin-top:.3rem">The month in US goods trade, tariffs, and the surge in AI-related imports — <b id="cvMonth"></b>.</p>
+          <div class="covernums">
+            <div class="cnum"><div class="stat-lab">Imports</div><div class="cval num" id="cvImp" style="color:var(--import)"></div></div>
+            <div class="cnum"><div class="stat-lab">Exports</div><div class="cval num" id="cvExp" style="color:var(--export)"></div></div>
+            <div class="cnum"><div class="stat-lab">Effective tariff rate</div><div class="cval num" id="cvTar" style="color:var(--alert)"></div></div>
+          </div>
+        </div>
+        <div class="foot"><span>tradewartracker.com</span><span>Source: US Census Bureau</span><span>Use ← → or swipe</span></div>
+      </div>
+    </section>
+
+    <!-- 2 · BIG PICTURE -->
+    <section class="slide" data-title="Trade balance">
+      <div class="bg" id="bgBalance"></div>
+      <div class="fg col between">
+        <div class="col gap-sm">
+          <div class="kick"><span class="eyebrow">The big picture · imports vs exports</span></div>
+          <div class="plate">
+            <div class="stat-lab">Monthly goods deficit</div>
+            <div class="big num" id="bpDeficit" style="color:var(--alert)"></div>
+            <div id="bpSentence" style="color:var(--ink-soft); font-size:clamp(.82rem,1.9vh,.98rem)"></div>
+          </div>
+          <div class="reveal revpanel">
+            <div class="rev-col"><div class="stat-lab" style="color:var(--import)">Biggest deficits</div><div id="revDef"></div></div>
+            <div class="rev-col"><div class="stat-lab" style="color:var(--export)">Biggest surpluses</div><div id="revSur"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · TARIFFS -->
+    <section class="slide" data-title="Tariffs">
+      <div class="bg" id="bgTariff"></div>
+      <div class="fg col between">
+        <div class="col gap-sm">
+          <div class="kick"><span class="eyebrow">Tariffs · overall implied rate</span></div>
+          <div class="plate">
+            <div class="stat-lab">Implied US tariff rate — customs duties ÷ import value</div>
+            <div style="display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap">
+              <div class="big num" id="tfRate" style="color:var(--alert)"></div>
+              <span class="chip down" id="tfDelta"></span>
+              <span class="chip" id="tfDuties"></span>
+            </div>
+            <div id="tfChina" style="color:var(--ink-soft); font-size:clamp(.82rem,1.9vh,.98rem)"></div>
+          </div>
+          <div class="reveal revpanel">
+            <div class="rev-col"><div class="stat-lab" style="color:var(--alert)">Highest eff. tariff</div><div id="revTarHi"></div></div>
+            <div class="rev-col"><div class="stat-lab" style="color:var(--export)">Lowest eff. tariff</div><div id="revTarLo"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · AI SPOTLIGHT -->
+    <section class="slide" data-title="AI buildout">
+      <div class="bg" id="bgAI"></div>
+      <div class="fg col between">
+        <div class="col gap-sm">
+          <div class="kick"><span class="eyebrow">Signature story · trade in AI-related products</span></div>
+          <div class="plate" style="flex-direction:row; align-items:center; gap:1.2rem">
+            <div class="arc" id="aiArc">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--line)" stroke-width="12"></circle>
+                <circle id="aiRing" cx="60" cy="60" r="50" fill="none" stroke="var(--import)" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"></circle>
+              </svg>
+              <div class="acen"><span class="num" id="aiShare" style="font-size:1.7rem; font-weight:800"></span><span class="stat-lab">of US imports</span></div>
+            </div>
+            <div class="col gap-sm">
+              <div class="stat-lab">US imports of AI-related products</div>
+              <div class="big num" id="aiImp" style="color:var(--import)"></div>
+              <div style="display:flex; gap:.5rem; flex-wrap:wrap"><span class="chip up" id="aiYoy"></span><span class="chip" id="aiTarChip"></span></div>
+            </div>
+          </div>
+          <p class="lede" id="aiLede" style="margin-top:.1rem"></p>
+          <div class="reveal revpanel">
+            <div class="rev-col">
+              <div class="stat-lab" style="color:var(--import)">Top sources of AI-related products · May 2026</div>
+              <div id="revAI"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 · PRODUCTS (no time series) -->
+    <section class="slide" data-title="Products">
+      <div class="fg pad-lg col between">
+        <div class="kick"><span class="eyebrow">Product spotlight · largest single HS6 imports</span></div>
+        <div class="col center" style="flex:1; justify-content:center">
+          <div class="plist" id="prodList"></div>
+        </div>
+        <div class="axis">Bars show country-of-origin mix · effective tariff = duties ÷ import value</div>
+      </div>
+    </section>
+
+    <!-- 6 · SUMMARY + EXPLORE -->
+    <section class="slide" data-title="Summary">
+      <div class="bg" id="bgClose"></div>
+      <div class="fg pad-lg col between">
+        <div class="kick"><span class="eyebrow">The month in summary</span></div>
+        <div class="postkit">
+          <div class="pk-thread">
+            <div class="pk-title">Key takeaways</div>
+            <div class="takeaways" id="takeaways"></div>
+          </div>
+          <div class="pk-side">
+            <div class="pk-angles">
+              <div class="pk-title">Interesting angles</div>
+              <div id="angles"></div>
+            </div>
+            <div class="cta">
+              <div>
+                <div class="cta-h">Explore the live tracker</div>
+                <div class="cta-s">Interactive charts, every country, updated monthly.</div>
+              </div>
+              <a class="go" href="https://tradewartracker.com" target="_blank" rel="noopener">tradewartracker.com →</a>
+            </div>
+          </div>
+        </div>
+        <div class="axis">Draft generated from the miner's brief.json · nothing here has been posted</div>
+      </div>
+    </section>
+
+  </div>
+
+  <button class="nav prev" id="prev" aria-label="Previous">‹</button>
+  <button class="nav next" id="next" aria-label="Next">›</button>
+</div>
+
+<style>
+  .arc{position:relative; width:120px; height:120px; flex:none}
+  .acen{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.05rem}
+</style>
+
+<script>
+(function(){
+  var FEED = {"monthISO": "2026-05", "monthLabel": "May 2026", "issue": "05", "cover": {"imports": "$305.2B", "exports": "$208.2B", "tariff": "6.9%"}, "bigpicture": {"deficit": "$97.0B", "sentenceHTML": "Imports <b class=\"num\" style=\"color:var(--ink)\">$305.2B</b> vs exports <b class=\"num\" style=\"color:var(--ink)\">$208.2B</b>. The gap widened <b class=\"num\" style=\"color:var(--ink)\">$8.4B</b> YoY.", "impPin": "Imports $305.2B ▲12%", "expPin": "Exports $208.2B ▲13%"}, "tariffs": {"rate": "6.9%", "deltaPp": "−2.2pp YoY", "dutiesChip": "$21.0B duties · −14.9%", "chinaHTML": "China's effective rate fell to <b class=\"num\" style=\"color:var(--ink)\">21.9%</b> (−26.0pp) even as its imports rose <b class=\"num\" style=\"color:var(--ink)\">+15.1%</b>.", "peakLabel": "Peak 10.8% · Oct 2025", "nowLabel": "6.9% now"}, "ai": {"sharePct": "27%", "imports": "$81.5B", "yoy": "+53.3% YoY", "tariffChip": "Mostly tariff-exempt · 2.9%", "ringFrac": 0.2671, "endLabel": "$81.5B ▲53%", "ledeHTML": "AI-related products are now ~27% of every dollar of US goods imports — up from ~20% a year ago. Since early 2024 their import growth has accelerated sharply, even as non-AI-related trade stayed roughly flat."}, "pins": {"pinMonth": "2026-05", "impVal": 305185726019.0, "expVal": 208207730180.0, "peakMonth": "2025-10", "peakVal": 10.83609, "nowVal": 6.890734266415448, "aiVal": "81508126261"}, "deficits": [{"c": "Vietnam", "v": -21.1}, {"c": "Mexico", "v": -20.6}, {"c": "Taiwan", "v": -18.3}], "surpluses": [{"c": "Netherlands", "v": 9.1}, {"c": "Australia", "v": 2.0}, {"c": "Singapore", "v": 1.8}], "tariffHigh": [{"c": "China", "r": 21.9}, {"c": "Indonesia", "r": 14.8}, {"c": "Japan", "r": 11.5}], "tariffLow": [{"c": "Ireland", "r": 1.3}, {"c": "Singapore", "r": 2.0}, {"c": "Taiwan", "r": 2.3}], "aiSources": [{"c": "Taiwan", "v": 19.8, "sh": 24}, {"c": "Mexico", "v": 19.3, "sh": 24}, {"c": "Vietnam", "v": 8.8, "sh": 11}, {"c": "Thailand", "v": 7.3, "sh": 9}, {"c": "Malaysia", "v": 5.1, "sh": 6}], "products": [{"name": "Servers & Data-Center Compute", "hs": "HS847150", "v": 25.9, "pct": 93.1, "rate": 0.1, "record": true, "src": [{"c": "Mexico", "s": 45.2}, {"c": "Taiwan", "s": 39.4}, {"c": "Thailand", "s": 8.7}, {"c": "Vietnam", "s": 2.0}]}, {"name": "Crude Petroleum", "hs": "HS270900", "v": 13.7, "pct": 26.1, "rate": 0.0, "record": false, "src": [{"c": "Canada", "s": 66.5}, {"c": "Mexico", "s": 5.2}, {"c": "Colombia", "s": 3.9}, {"c": "Brazil", "s": 2.8}]}, {"name": "Computer Parts & Memory Modules", "hs": "HS847330", "v": 11.7, "pct": 88.5, "rate": 0.3, "record": false, "src": [{"c": "Taiwan", "s": 30.6}, {"c": "Vietnam", "s": 25.6}, {"c": "Malaysia", "s": 18.1}, {"c": "Korea, South", "s": 15.8}]}, {"name": "Networking & Telecom Equipment", "hs": "HS851762", "v": 10.6, "pct": 62.1, "rate": 0.2, "record": false, "src": [{"c": "Vietnam", "s": 28.0}, {"c": "Thailand", "s": 26.4}, {"c": "Mexico", "s": 12.9}, {"c": "Taiwan", "s": 11.9}]}, {"name": "Solid-State Storage (SSD/Flash)", "hs": "HS852351", "v": 5.3, "pct": 274.2, "rate": 0.0, "record": true, "src": [{"c": "Malaysia", "s": 23.7}, {"c": "Taiwan", "s": 18.6}, {"c": "Vietnam", "s": 18.1}, {"c": "Korea, South", "s": 17.5}]}], "takeaways": ["Imports: <b>$305.2B</b> (+11.9% YoY).", "Exports: <b>$208.2B</b> (+13.0% YoY) — a <b>$97.0B</b> goods deficit.", "Implied tariff rate: <b>6.9%</b>, down from a ~11% peak in Oct 2025.", "AI-related products: <b>~27%</b> of all US imports (+53.3% YoY).", "Top import: servers & data-center compute, <b>$25.9B</b> (+93.1% YoY)."], "angles": [{"tag": "Product", "text": "Sourcing is shifting: in networking & telecom equipment, imports from China fell 37% while Taiwan jumped 113% YoY."}, {"tag": "Country", "text": "China's effective tariff fell to <b>21.9%</b> (−26.0pp) even as its imports rose +15.1%."}, {"tag": "Tariff", "text": "AI-related imports are mostly tariff-exempt — an effective rate of just <b>2.9%</b> despite the 6.9% overall."}], "series": {"latest": "2026-05", "imports": [["2023-01", 253299898076.0], ["2023-02", 229479335425.0], ["2023-03", 262734765807.0], ["2023-04", 247250801378.0], ["2023-05", 262637552499.0], ["2023-06", 258214665715.0], ["2023-07", 253552639624.0], ["2023-08", 265231670136.0], ["2023-09", 259546221142.0], ["2023-10", 274236298815.0], ["2023-11", 256567097651.0], ["2023-12", 246063073517.0], ["2024-01", 254177731542.0], ["2024-02", 241451847024.0], ["2024-03", 257856741202.0], ["2024-04", 268846003090.0], ["2024-05", 274922243715.0], ["2024-06", 263197417053.0], ["2024-07", 284667412329.0], ["2024-08", 275690351760.0], ["2024-09", 283601686344.0], ["2024-10", 291252066022.0], ["2024-11", 271431566638.0], ["2024-12", 281586199816.0], ["2025-01", 321908039017.0], ["2025-02", 292030360397.0], ["2025-03", 340669490994.0], ["2025-04", 273424981749.0], ["2025-05", 272740608068.0], ["2025-06", 259200840060.0], ["2025-07", 289827628706.0], ["2025-08", 256328013145.0], ["2025-09", 275544194992.0], ["2025-10", 274471414950.0], ["2025-11", 257383725152.0], ["2025-12", 277691724324.0], ["2026-01", 259411163370.0], ["2026-02", 250562806403.0], ["2026-03", 299166410274.0], ["2026-04", 299710324247.0], ["2026-05", 305185726019.0]], "exports": [["2023-01", 164753469174.0], ["2023-02", 158710826560.0], ["2023-03", 183435844691.0], ["2023-04", 162397097942.0], ["2023-05", 167050437271.0], ["2023-06", 167346575544.0], ["2023-07", 160450917523.0], ["2023-08", 173323029089.0], ["2023-09", 172227066427.0], ["2023-10", 178506685856.0], ["2023-11", 165793988352.0], ["2023-12", 167943323180.0], ["2024-01", 160480542185.0], ["2024-02", 167867404804.0], ["2024-03", 179835637763.0], ["2024-04", 171524283947.0], ["2024-05", 173226161864.0], ["2024-06", 174250090446.0], ["2024-07", 168946994504.0], ["2024-08", 180054505054.0], ["2024-09", 171226761213.0], ["2024-10", 176726263846.0], ["2024-11", 174326878368.0], ["2024-12", 164558907833.0], ["2025-01", 165002115616.0], ["2025-02", 167208185789.0], ["2025-03", 191446857275.0], ["2025-04", 189130596611.0], ["2025-05", 184209653448.0], ["2025-06", 180538046092.0], ["2025-07", 175457024890.0], ["2025-08", 179448426481.0], ["2025-09", 185184743498.0], ["2025-10", 202678773830.0], ["2025-11", 181372314311.0], ["2025-12", 178214707278.0], ["2026-01", 186386441751.0], ["2026-02", 195137551228.0], ["2026-03", 221393481852.0], ["2026-04", 217995876395.0], ["2026-05", 208207730180.0]], "itariff": [["2023-01", 2.565394], ["2023-02", 2.458063], ["2023-03", 2.15026], ["2023-04", 2.385649], ["2023-05", 2.37766], ["2023-06", 2.338765], ["2023-07", 2.461731], ["2023-08", 2.3856], ["2023-09", 2.352786], ["2023-10", 2.261655], ["2023-11", 2.166857], ["2023-12", 2.333887], ["2024-01", 2.471865], ["2024-02", 2.427715], ["2024-03", 2.210081], ["2024-04", 2.16956], ["2024-05", 2.232867], ["2024-06", 2.346194], ["2024-07", 2.484665], ["2024-08", 2.514418], ["2024-09", 2.406425], ["2024-10", 2.351219], ["2024-11", 2.351254], ["2024-12", 2.337188], ["2025-01", 2.216066], ["2025-02", 2.330996], ["2025-03", 3.718384], ["2025-04", 7.182632], ["2025-05", 9.059812], ["2025-06", 9.287802], ["2025-07", 9.50474], ["2025-08", 10.48854], ["2025-09", 10.534001], ["2025-10", 10.83609], ["2025-11", 9.790225], ["2025-12", 9.340081], ["2026-01", 9.871644], ["2026-02", 8.476978], ["2026-03", 6.848561], ["2026-04", 6.73939], ["2026-05", 6.890734]], "ai_imports": [["2023-01", 29951950147.0], ["2023-02", 28156758694.0], ["2023-03", 33407242696.0], ["2023-04", 29891301434.0], ["2023-05", 32422627295.0], ["2023-06", 32362455259.0], ["2023-07", 31227993762.0], ["2023-08", 32343411154.0], ["2023-09", 31830259411.0], ["2023-10", 33883258366.0], ["2023-11", 32506877701.0], ["2023-12", 31030178004.0], ["2024-01", 32260875757.0], ["2024-02", 29535401256.0], ["2024-03", 33979340773.0], ["2024-04", 35574523760.0], ["2024-05", 37008353847.0], ["2024-06", 38781215838.0], ["2024-07", 42913950859.0], ["2024-08", 42924868733.0], ["2024-09", 44913868609.0], ["2024-10", 42805151589.0], ["2024-11", 41217622574.0], ["2024-12", 44407344582.0], ["2025-01", 43333096854.0], ["2025-02", 41239155758.0], ["2025-03", 51106134235.0], ["2025-04", 50763370425.0], ["2025-05", 53185403771.0], ["2025-06", 53524875094.0], ["2025-07", 58937393407.0], ["2025-08", 54569577716.0], ["2025-09", 53029991605.0], ["2025-10", 63619095295.0], ["2025-11", 60950926298.0], ["2025-12", 69737979058.0], ["2026-01", 66501182051.0], ["2026-02", 64072598761.0], ["2026-03", 78916846338.0], ["2026-04", 79834543061.0], ["2026-05", 81508126261.0]]}};
+  var DATA = {
+    deficits:FEED.deficits, surpluses:FEED.surpluses,
+    tariffHigh:FEED.tariffHigh, tariffLow:FEED.tariffLow,
+    aiSources:FEED.aiSources, products:FEED.products,
+    takeaways:FEED.takeaways, angles:FEED.angles
+  };
+  function _t(id,v){var e=document.getElementById(id); if(e)e.textContent=v;}
+  function _h(id,v){var e=document.getElementById(id); if(e)e.innerHTML=v;}
+  function applyFeed(){
+    _t("tbMonth","Dispatch \u00b7 "+FEED.monthLabel);
+    _t("cvIssue","Monthly Dispatch \u00b7 Issue No. "+FEED.issue);
+    _t("cvMonth",FEED.monthLabel);
+    _t("cvImp",FEED.cover.imports); _t("cvExp",FEED.cover.exports); _t("cvTar",FEED.cover.tariff);
+    _t("bpDeficit",FEED.bigpicture.deficit); _h("bpSentence",FEED.bigpicture.sentenceHTML);
+    _t("tfRate",FEED.tariffs.rate); _t("tfDelta",FEED.tariffs.deltaPp); _t("tfDuties",FEED.tariffs.dutiesChip);
+    _h("tfChina",FEED.tariffs.chinaHTML);
+    _t("aiShare",FEED.ai.sharePct); _t("aiImp",FEED.ai.imports); _t("aiYoy",FEED.ai.yoy); _t("aiTarChip",FEED.ai.tariffChip);
+    _h("aiLede",FEED.ai.ledeHTML);
+  }
+  applyFeed();
+  var SEG = ["var(--import)","var(--import-soft)","#C9A94E","#9AA7BC"];
+  var f = function(n){return (n>=0?"+":"−")+Math.abs(n).toFixed(1);};
+
+  var SERIES = FEED.series;
+
+  // ---------- full-bleed background line charts ----------
+  function midx(s){ return (+s.slice(0,4))*12 + (+s.slice(5,7)) - 1; }
+  var X0=midx("2023-01"), LT=midx(SERIES.latest), X1=LT+4, SPAN=X1-X0;
+  var XL=1.5, XR=7, VT=22, VB=99;   // % geometry within the slide box
+
+  var CHARTS=[];
+  function chartLayer(id, seriesSpec, o){
+    var clip=function(d){ return d.filter(function(p){ return midx(p[0])>=X0; }); };
+    var vals=[]; seriesSpec.forEach(function(s){ clip(s.data).forEach(function(p){ vals.push(p[1]); }); });
+    var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals), ymin, ymax;
+    if(o.kind==="percent"){ ymin=0; ymax=mx*1.10; }
+    else if(o.zero){ ymin=0; ymax=mx*1.06; }
+    else { ymin=mn*0.9; ymax=mx*1.04; }
+    // logical geometry as % of the slide box (shared with the HTML pin layer)
+    var px=function(mi){ return XL+(mi-X0)/SPAN*(100-XL-XR); };
+    var py=function(v){ return VT+(1-(v-ymin)/(ymax-ymin))*(VB-VT); };
+    var host=document.getElementById(id);
+    var holder=document.createElement("div"); holder.className="csvg"; holder.id=id+"_h"; host.appendChild(holder);
+    var g={px:px, py:py, holder:holder, spec:seriesSpec, o:o, clip:clip};
+    CHARTS.push(g); drawChart(g);
+    return g;
+  }
+  // draw in ACTUAL pixel coordinates (viewBox = container px, scale 1:1) so the
+  // stroke width is uniform everywhere — no non-uniform-scale thick/thin artifact.
+  function drawChart(g){
+    var W=g.holder.clientWidth, H=g.holder.clientHeight; if(!W||!H) return;
+    var sx=function(mi){ return (g.px(mi)/100*W).toFixed(1); };
+    var sy=function(v){ return (g.py(v)/100*H).toFixed(1); };
+    var lp=function(d){ return d.map(function(p,i){ return (i?"L":"M")+sx(midx(p[0]))+" "+sy(p[1]); }).join(" "); };
+    var defs="", body="", tsx=(g.px(midx("2025-02"))/100*W);
+    body+="<rect x='"+tsx.toFixed(1)+"' y='0' width='"+(W-tsx).toFixed(1)+"' height='"+H+"' fill='var(--alert)' opacity='.06'/>";
+    ["2024","2025","2026"].forEach(function(y){ var xx=(g.px(midx(y+"-01"))/100*W).toFixed(1);
+      body+="<line x1='"+xx+"' y1='0' x2='"+xx+"' y2='"+H+"' stroke='var(--line)' stroke-width='1' opacity='.5'/>"; });
+    g.spec.forEach(function(s,i){ var d=g.clip(s.data), gid=g.holder.id+"_g"+i;
+      defs+="<linearGradient id='"+gid+"' x1='0' y1='0' x2='0' y2='1'>"+
+            "<stop offset='0' stop-color='"+s.color+"' stop-opacity='"+(g.o.fill==="deficit"?".18":".30")+"'/>"+
+            "<stop offset='1' stop-color='"+s.color+"' stop-opacity='0'/></linearGradient>";
+      body+="<path class='cfill' d='"+lp(d)+" L"+sx(midx(d[d.length-1][0]))+" "+H+" L"+sx(midx(d[0][0]))+" "+H+" Z' fill='url(#"+gid+")'/>";
+    });
+    g.spec.forEach(function(s){ var d=g.clip(s.data);
+      body+="<path class='ln' d='"+lp(d)+"' fill='none' stroke='"+s.color+"' stroke-width='3.5' stroke-linejoin='round' stroke-linecap='round' pathLength='1'/>"; });
+    g.holder.innerHTML="<svg viewBox='0 0 "+W+" "+H+"' preserveAspectRatio='none' role='img'><defs>"+defs+"</defs>"+body+"</svg>";
+  }
+
+  function pin(fgSel, geo, at, val, color, cls, html){
+    var host=document.querySelector(fgSel);
+    var el=document.createElement("div");
+    el.className="pin "+(cls||"");
+    el.style.left=geo.px(midx(at))+"%"; el.style.top=geo.py(val)+"%";
+    el.innerHTML="<span class='dot' style='background:"+color+"'></span><span class='lab'>"+html+"</span>";
+    host.appendChild(el);
+  }
+
+  function timeAxis(bgSel, geo){
+    var host=document.querySelector(bgSel);
+    ["2023","2024","2025","2026"].forEach(function(y,i){
+      var t=document.createElement("div"); t.className="ytick"+(i===0?" first":"");
+      t.style.left=geo.px(midx(y+"-01"))+"%"; t.textContent=y; host.appendChild(t);
+    });
+    var m=document.createElement("div"); m.className="tmark"; m.style.left=geo.px(midx("2025-02"))+"%";
+    m.innerHTML="<span class='tlab'>Feb 2025 · tariffs begin</span>"; host.appendChild(m);
+    var c=document.createElement("div"); c.className="credit"; c.textContent="tradewartracker.com · Source: US Census Bureau";
+    host.appendChild(c);
+  }
+
+  // build the three chart slides
+  (function(){
+    // cover + summary: same faint imports-vs-exports backdrop (bookends the deck)
+    chartLayer("bgCover",[{data:SERIES.imports,color:"var(--import)"},{data:SERIES.exports,color:"var(--export)"}],{});
+    chartLayer("bgClose",[{data:SERIES.imports,color:"var(--import)"},{data:SERIES.exports,color:"var(--export)"}],{});
+    var g1=chartLayer("bgBalance",[{data:SERIES.imports,color:"var(--import)"},{data:SERIES.exports,color:"var(--export)"}],{fill:"deficit"});
+    pin("[data-title='Trade balance'] .bg", g1, FEED.pins.pinMonth, FEED.pins.impVal, "var(--import)", "r", FEED.bigpicture.impPin);
+    pin("[data-title='Trade balance'] .bg", g1, FEED.pins.pinMonth, FEED.pins.expVal, "var(--export)", "r", FEED.bigpicture.expPin);
+    timeAxis("[data-title='Trade balance'] .bg", g1);
+    var g2=chartLayer("bgTariff",[{data:SERIES.itariff,color:"var(--alert)"}],{kind:"percent"});
+    pin("[data-title='Tariffs'] .bg", g2, FEED.pins.peakMonth, FEED.pins.peakVal, "var(--alert)", "t", FEED.tariffs.peakLabel);
+    pin("[data-title='Tariffs'] .bg", g2, FEED.pins.pinMonth, FEED.pins.nowVal, "var(--alert)", "r", FEED.tariffs.nowLabel);
+    timeAxis("[data-title='Tariffs'] .bg", g2);
+    var g3=chartLayer("bgAI",[{data:SERIES.ai_imports,color:"var(--import)"}],{zero:true});
+    pin("[data-title='AI buildout'] .bg", g3, FEED.pins.pinMonth, FEED.pins.aiVal, "var(--import)", "r", FEED.ai.endLabel);
+    timeAxis("[data-title='AI buildout'] .bg", g3);
+  })();
+
+  // ---------- reveal panels (progressive-disclosure detail under each plate) ----------
+  document.getElementById("revDef").innerHTML = DATA.deficits.map(function(r){
+    return "<div class='rev-row'><b style='color:var(--import)'>−$"+Math.abs(r.v).toFixed(1)+"B</b>"+r.c+"</div>";
+  }).join("");
+  document.getElementById("revSur").innerHTML = DATA.surpluses.map(function(r){
+    return "<div class='rev-row'><b style='color:var(--export)'>+$"+r.v.toFixed(1)+"B</b>"+r.c+"</div>";
+  }).join("");
+  document.getElementById("revTarHi").innerHTML = DATA.tariffHigh.map(function(r){
+    return "<div class='rev-row'><b style='color:var(--alert)'>"+r.r.toFixed(1)+"%</b>"+r.c+"</div>";
+  }).join("");
+  document.getElementById("revTarLo").innerHTML = DATA.tariffLow.map(function(r){
+    return "<div class='rev-row'><b style='color:var(--export)'>"+r.r.toFixed(1)+"%</b>"+r.c+"</div>";
+  }).join("");
+  document.getElementById("revAI").innerHTML = DATA.aiSources.map(function(r){
+    return "<div class='rev-row'><b style='color:var(--import)'>$"+r.v.toFixed(1)+"B</b>"+r.c+"<span>"+r.sh+"%</span></div>";
+  }).join("");
+
+  // ---------- products (no sparklines) ----------
+  document.getElementById("prodList").innerHTML = DATA.products.map(function(p){
+    var used=p.src.reduce(function(a,s){return a+s.s;},0);
+    var segs=p.src.map(function(s,i){return "<i data-w='"+s.s+"' style='background:"+SEG[i]+"'></i>";}).join("");
+    if(used<99.5) segs+="<i data-w='"+(100-used)+"' style='background:var(--line)'></i>";
+    var key=p.src.map(function(s,i){return "<span><i style='background:"+SEG[i]+"'></i>"+s.c+" "+s.s.toFixed(0)+"%</span>";}).join("");
+    return "<div class='prod'>"+
+      "<div><span class='pn'>"+p.name+"</span> <span class='hs'>"+p.hs+"</span></div>"+
+      "<div class='rt'>"+(p.record?"<span class='chip flag'>● Record</span>":"")+
+        "<span class='chip "+(p.pct>=0?"up":"down")+"'>"+f(p.pct)+"%</span><span class='pv num'>$"+p.v.toFixed(1)+"B</span></div>"+
+      "<div class='seg'>"+segs+"</div>"+
+      "<div class='skey'>"+key+"<span style='color:var(--ink-faint)'>Eff. tariff "+p.rate.toFixed(1)+"%</span></div>"+
+    "</div>";
+  }).join("");
+
+  // ---------- thread ----------
+  document.getElementById("takeaways").innerHTML = DATA.takeaways.map(function(t,i){
+    return "<div class='tk'><span class='kn num'>"+(i+1)+"</span><span>"+t+"</span></div>";
+  }).join("");
+  document.getElementById("angles").innerHTML = DATA.angles.map(function(a){
+    return "<div class='angle'><span class='tag'>"+a.tag+"</span><span>"+a.text+"</span></div>";
+  }).join("");
+
+  // ---------- deck navigation ----------
+  var deck=document.getElementById("deck"), slides=[].slice.call(deck.querySelectorAll(".slide")),
+      rail=document.getElementById("rail"), counter=document.getElementById("counter"),
+      prev=document.getElementById("prev"), next=document.getElementById("next"), idx=0;
+  slides.forEach(function(s,i){ var b=document.createElement("button");
+    b.setAttribute("role","tab"); b.title=s.dataset.title; b.setAttribute("aria-label",s.dataset.title);
+    b.onclick=function(){go(i);}; rail.appendChild(b); });
+  var dots=[].slice.call(rail.children), pad=function(n){return (n<10?"0":"")+n;};
+
+  function animate(slide){
+    slide.querySelectorAll("[data-w]").forEach(function(el){ el.style.width="0"; void el.offsetWidth; el.style.width=el.dataset.w+"%"; });
+    var ring=slide.querySelector("#aiRing");
+    if(ring){ ring.style.transition="none"; ring.style.strokeDashoffset="314"; void ring.getBoundingClientRect();
+      ring.style.transition="stroke-dashoffset 1.2s cubic-bezier(.2,.7,.2,1)"; ring.style.strokeDashoffset=(314*(1-FEED.ai.ringFrac)).toFixed(0); }
+  }
+  function setActive(i){ idx=i;
+    slides.forEach(function(s,j){ s.classList.toggle("is-active", j===i); });
+    dots.forEach(function(d,j){ d.classList.toggle("on", j===i); });
+    counter.textContent=pad(i+1)+" / "+pad(slides.length);
+    prev.disabled=(i===0); next.disabled=(i===slides.length-1); animate(slides[i]);
+  }
+  function go(i){ i=Math.max(0,Math.min(slides.length-1,i)); deck.scrollTo({left:deck.clientWidth*i, behavior:"smooth"}); }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){
+    if(e.isIntersecting && e.intersectionRatio>0.55){ var i=slides.indexOf(e.target); if(i!==idx) setActive(i); } });
+  },{root:deck, threshold:[0.55]});
+  slides.forEach(function(s){ io.observe(s); });
+  prev.onclick=function(){go(idx-1);}; next.onclick=function(){go(idx+1);};
+  window.addEventListener("keydown",function(e){ if(e.key==="ArrowRight"){e.preventDefault();go(idx+1);} if(e.key==="ArrowLeft"){e.preventDefault();go(idx-1);} });
+  window.addEventListener("resize",function(){ deck.scrollLeft=deck.clientWidth*idx; CHARTS.forEach(drawChart); });
+
+  var tb=document.getElementById("themeBtn");
+  tb.onclick=function(){ var cur=document.documentElement.getAttribute("data-theme");
+    var isDark=cur?cur==="dark":window.matchMedia("(prefers-color-scheme:dark)").matches;
+    document.documentElement.setAttribute("data-theme", isDark?"light":"dark"); };
+
+  setActive(0);
+  window.addEventListener("load", function(){ CHARTS.forEach(drawChart); });
+})();
+</script>
