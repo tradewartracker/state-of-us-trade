@@ -240,6 +240,10 @@
   @media (max-width:700px){
     .kick::after{display:none}                    /* rule collided with pins */
     .kick .eyebrow{font-size:.72rem; letter-spacing:.16em}
+    /* slide padding was ~30px top AND bottom at this height - reclaiming it
+       buys back a whole content row on every slide. */
+    .fg{padding:.85rem 1rem}
+    .fg.pad-lg{padding:.9rem 1.05rem}
 
     /* overlays: smaller, and never full-bleed wide */
     .plate{padding:.55rem .75rem; border-radius:11px; gap:.25rem; max-width:100%}
@@ -269,6 +273,33 @@
     .skey i{width:7px; height:7px}
     .chip{font-size:.62rem; padding:.1em .45em}
     .axis{font-size:.56rem}
+
+    /* AI slide: its plate ran a size larger than the other slides' (big ring,
+       big figure, full-size lede paragraph) which made it read as crowded and
+       inconsistent. Bring it down to the same weight as slides 2 and 3. */
+    .lede{font-size:.8rem; line-height:1.34; max-width:none}
+    .big{font-size:1.85rem}
+    .arc{width:88px; height:88px}
+    #aiShare{font-size:1.2rem !important}   /* set inline in the markup */
+
+    /* Summary slide: 5 takeaways + 3 angles + CTA overran the screen, and
+       (like the products slide) a centred middle child spills both ways
+       with no way to scroll. */
+    /* align-content:start is the important one - the default `center` makes an
+       over-tall postkit spill UPWARD over the section eyebrow, exactly like the
+       products slide did. Starting it at the top sends any residual overflow
+       downward only, where the compression below keeps it off the edge. */
+    .postkit{min-height:0; gap:.42rem; align-content:start}
+    .pk-thread, .pk-angles{gap:.28rem}
+    .pk-title{font-size:.82rem; margin-bottom:.05rem; letter-spacing:.05em}
+    .takeaways, #angles{gap:.26rem}
+    .tk, .angle{font-size:.75rem; line-height:1.3; gap:.45rem;
+      padding:.34rem .5rem; border-radius:9px}
+    .cta{margin-top:.15rem; padding:.5rem .7rem; border-radius:12px; gap:.5rem}
+    .cta-h{font-size:.86rem}
+    .cta-s{font-size:.68rem}
+    .cta .go{padding:.4rem .7rem; font-size:.76rem; border-radius:8px}
+    .editions{font-size:.62rem}
   }
 
   /* nav */
