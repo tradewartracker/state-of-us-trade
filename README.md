@@ -46,6 +46,18 @@ Prior months regenerate with `--asof YYYY-MM`.
 4. Add a row to `docs/archive.html`.
 5. Commit and push — Pages redeploys automatically.
 
+## tradewartracker.com
+
+The site (Weebly) **links out** to these pages rather than embedding them — the
+deck is full-viewport and never scrolls, so it does not survive a fixed-height
+iframe, worst on mobile.
+
+- `weebly-embed.html` (repo root, not published) is a promo card to paste into a
+  Weebly **Embed Code** element. Evergreen — no month or figures — so it never
+  needs editing when a new edition ships.
+- The nav entry is a Weebly page of type **External Link** pointing at
+  `archive.html`.
+
 ## Notes
 
 - Back editions are computed from the **current** data vintage, so they include

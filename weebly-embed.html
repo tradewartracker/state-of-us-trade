@@ -1,0 +1,72 @@
+<!--
+  Weebly promo card for the State of US Trade deck.
+
+  HOW TO USE: in the Weebly editor drag an "Embed Code" element onto the page,
+  click it, choose "Edit Custom HTML", and paste EVERYTHING below this comment.
+
+  Deliberately evergreen - no month, no figures - so it never needs touching
+  when a new edition ships. The deck itself shows the month.
+
+  Class names are all prefixed .sut- so the Weebly theme's CSS cannot collide
+  with them. Do not remove the prefix.
+-->
+
+<style>
+  .sut-card{
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    flex-wrap:wrap;
+    max-width:860px; margin:28px auto; padding:26px 28px;
+    border:1px solid #D3DAE4; border-left:5px solid #D9752B; border-radius:14px;
+    background:#FFFFFF;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    box-shadow:0 1px 3px rgba(14,22,38,.06);
+  }
+  .sut-card *{box-sizing:border-box}
+  .sut-copy{flex:1 1 340px; min-width:0}
+  .sut-eyebrow{
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    font-weight:700; color:#D9752B; margin:0 0 8px;
+  }
+  .sut-title{
+    font-size:25px; line-height:1.15; font-weight:800; letter-spacing:-.01em;
+    color:#0E1626; margin:0 0 8px;
+  }
+  .sut-sub{font-size:15px; line-height:1.5; color:#5A6B84; margin:0}
+  .sut-actions{flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-start; gap:9px}
+  .sut-btn{
+    display:inline-block; padding:13px 24px; border-radius:9px;
+    background:#0E1626; color:#FFFFFF !important; text-decoration:none !important;
+    font-size:15px; font-weight:700; white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .sut-btn:hover{background:#D9752B; color:#FFFFFF !important}
+  .sut-alt{
+    font-size:13px; color:#5A6B84 !important; text-decoration:none !important;
+    border-bottom:1px solid #C3CCDA; padding-bottom:1px;
+  }
+  .sut-alt:hover{color:#0E1626 !important; border-bottom-color:#0E1626}
+  @media (max-width:560px){
+    .sut-card{padding:22px; gap:18px}
+    .sut-title{font-size:21px}
+    .sut-actions{width:100%}
+    .sut-btn{width:100%; text-align:center}
+  }
+</style>
+
+<div class="sut-card">
+  <div class="sut-copy">
+    <p class="sut-eyebrow">Monthly dispatch</p>
+    <p class="sut-title">State of US Trade</p>
+    <p class="sut-sub">A short, swipeable report on US goods trade &mdash; imports,
+    exports, tariffs, and the buildout in AI-related products. Updated with each
+    Census release.</p>
+  </div>
+  <div class="sut-actions">
+    <a class="sut-btn"
+       href="https://tradewartracker.github.io/state-of-us-trade/"
+       target="_blank" rel="noopener">Read the latest &rarr;</a>
+    <a class="sut-alt"
+       href="https://tradewartracker.github.io/state-of-us-trade/archive.html"
+       target="_blank" rel="noopener">See all editions</a>
+  </div>
+</div>
